@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Image Colorizer - Display</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f9fafc, #eef2ff);
+    color: #333;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+    background: #ffffff;
+    padding: 15px 60px;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg,#6366f1,#06b6d4) 1;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 22px;
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.3s;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+/* ================= MAIN WRAPPER ================= */
+.main-wrapper {
+    min-height: 100vh;
+    padding: 120px 20px 80px 20px;
+}
+
+/* ================= CONTAINER BOX ================= */
+.container-box {
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 50px;
+    box-shadow: 0 15px 40px rgba(99,102,241,0.1);
+    position: relative;
+    animation: fadeIn 0.8s ease;
+    border: 2px solid #eef2ff;
+}
+
+/* ================= CLOSE BUTTON ================= */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.3s;
+}
+
+.close-btn:hover {
+    transform: scale(1.2);
+}
+
+/* ================= TITLE ================= */
+.title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+    font-size: 30px;
+    color: #1e293b;
+}
+
+/* ================= IMAGE SECTION ================= */
+.image-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.image-box {
+    flex: 1;
+    text-align: center;
+    transition: 0.4s;
+}
+
+.image-box h3 {
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #6366f1;
+}
+
+.image-box img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    transition: 0.4s ease;
+    border: 3px solid #eef2ff;
+}
+
+.image-box img:hover {
+    transform: scale(1.05);
+    border-color: #6366f1;
+    box-shadow: 0 15px 40px rgba(99,102,241,0.2);
+}
+
+/* ================= BUTTON ================= */
+.btn-custom {
+    margin-top: 40px;
+    padding: 14px 35px;
+    font-size: 16px;
+    border-radius: 30px;
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: 0.4s;
+}
+
+.btn-custom:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+}
+
+/* ================= FOOTER ================= */
+.footer {
+    background: #ffffff;
+    text-align: center;
+    padding: 25px;
+    border-top: 2px solid #eef2ff;
+    color: #64748b;
+    margin-top: 50px;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width:768px){
+    .image-container {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="#">AI Image Colorizer</a>
+</nav>
+
+<div class="main-wrapper container">
+    <div class="container-box">
+
+        <!-- CLOSE BUTTON -->
+        <span class="close-btn" onclick="goHome()">×</span>
+
+        <h2 class="title">✨ See the Magic of Color Transformation ✨</h2>
+
+        <div class="image-container">
+            <div class="image-box">
+                <h3>Original Image</h3>
+                <img src="{{ url_for('uploaded_file', filename=filename) }}" alt="Original">
+            </div>
+
+            <div class="image-box">
+                <h3>Colorized Image</h3>
+                <img src="{{ url_for('colorized_file', filename=filename) }}" alt="Colorized">
+            </div>
+        </div>
+
+        <div class="text-center">
+            <form id="download-form" action="{{ url_for('download_colorized', filename=filename) }}" method="get">
+                <button type="submit" class="btn btn-custom">
+                    ⬇ Download Colorized Image
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<div class="footer">
+    © 2025 AI Image Colorizer | Intelligent Computer Vision Platform
+</div>
+
+<script>
+function goHome() {
+    window.location.href = "{{ url_for('index') }}";
+}
+
+document.getElementById('download-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var form = this;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', form.action, true);
+    xhr.responseType = 'blob';
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            var a = document.createElement('a');
+            var url = window.URL.createObjectURL(xhr.response);
+            a.href = url;
+            a.download = '{{ filename }}';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        }
+    };
+    xhr.send();
+});
+</script>
+
+</body>
+</html>

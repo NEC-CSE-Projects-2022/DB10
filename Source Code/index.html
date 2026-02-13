@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Image Colorizer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #f9fafc, #eef2ff);
+    color: #333;
+}
+
+/* ================= NAVBAR ================= */
+.navbar {
+    background: #ffffff;
+    padding: 15px 60px;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg,#6366f1,#06b6d4) 1;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 22px;
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: 0.3s;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+/* ================= HERO ================= */
+.hero {
+    padding: 130px 20px 80px 20px;
+    text-align: center;
+    background: linear-gradient(to right, #ffffff, #f1f5ff);
+}
+
+.hero h1 {
+    font-weight: 700;
+    font-size: 42px;
+    margin-bottom: 20px;
+    color: #1e293b;
+}
+
+/* Text Carousel */
+.carousel-text {
+    font-size: 20px;
+    font-weight: 600;
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    height: 30px;
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-text span {
+    display: block;
+    animation: slideText 8s infinite;
+}
+
+@keyframes slideText {
+    0% { transform: translateY(0%); }
+    25% { transform: translateY(-100%); }
+    50% { transform: translateY(-200%); }
+    75% { transform: translateY(-300%); }
+    100% { transform: translateY(0%); }
+}
+
+/* ================= BUTTON ================= */
+.btn-primary-custom {
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    border: none;
+    padding: 12px 32px;
+    border-radius: 30px;
+    font-weight: 600;
+    color: white;
+    transition: 0.4s ease;
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+}
+
+/* ================= SECTION ================= */
+.section {
+    padding: 90px 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 60px;
+    font-size: 28px;
+    color: #1e293b;
+}
+
+/* ================= CARD ================= */
+.card-box {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    border: 2px solid #eef2ff;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-box:hover {
+    transform: translateY(-10px);
+    border-color: #6366f1;
+    box-shadow: 0 20px 50px rgba(99,102,241,0.2);
+}
+
+/* Glow effect */
+.card-box::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg,#6366f1,#06b6d4);
+    opacity: 0;
+    top: 0;
+    left: 0;
+    transition: 0.4s;
+    z-index: -1;
+}
+
+.card-box:hover::after {
+    opacity: 0.05;
+}
+
+.card-box h5 {
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.card-box p {
+    color: #64748b;
+}
+
+/* ================= CONTACT ================= */
+.contact-box {
+    background: #ffffff;
+    padding: 60px;
+    border-radius: 20px;
+    border: 2px solid #eef2ff;
+    transition: 0.3s;
+}
+
+.contact-box:hover {
+    border-color: #06b6d4;
+}
+
+input, textarea {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    transition: 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 10px rgba(99,102,241,0.3) !important;
+}
+/* ================= LOADING OVERLAY ================= */
+#loadingOverlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(99,102,241,0.15);
+    backdrop-filter: blur(10px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+/* Loader Box */
+.loader-box {
+    background: white;
+    padding: 50px 60px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+    animation: fadeIn 0.5s ease;
+}
+
+/* Animated AI Spinner */
+.ai-spinner {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 6px solid #eef2ff;
+    border-top: 6px solid #6366f1;
+    border-right: 6px solid #06b6d4;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+/* Loading Text */
+.loading-text {
+    margin-top: 25px;
+    font-weight: 600;
+    background: linear-gradient(90deg,#6366f1,#06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Spinner Animation */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ================= FOOTER ================= */
+.footer {
+    background: #ffffff;
+    text-align: center;
+    padding: 30px;
+    border-top: 2px solid #eef2ff;
+    color: #64748b;
+}
+
+@media(max-width:768px){
+    .hero h1 {
+        font-size: 28px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+    <a class="navbar-brand" href="#">AI Image Colorizer</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <h1>Transform Grayscale Images into Color</h1>
+
+    <!-- TEXT CAROUSEL -->
+    <div class="carousel-text mb-3">
+        <span>
+            Deep Learning Powered <br>
+            CNN Based Intelligence <br>
+            Realistic Color Restoration <br>
+            Smart AI Enhancement
+        </span>
+    </div>
+
+    <div class="mt-4">
+        <form action="/upload" method="post" enctype="multipart/form-data" class="form-inline justify-content-center">
+            <input type="file" name="image" accept="image/*" class="form-control mr-3" required>
+            <button class="btn btn-primary-custom">Upload Image</button>
+        </form>
+    </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section container">
+    <h3 class="section-title">Technologies Used</h3>
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card-box">
+                <h5>Caffe Framework</h5>
+                <p>Executes pretrained colorization models efficiently.</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card-box">
+                <h5>CNN Model</h5>
+                <p>Predicts realistic chrominance channels.</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card-box">
+                <h5>OpenCV</h5>
+                <p>Handles preprocessing and output generation.</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card-box">
+                <h5>Flask Backend</h5>
+                <p>Manages uploads and runs inference securely.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTACT -->
+<div class="section container">
+    <h3 class="section-title">Contact Us</h3>
+    <div class="contact-box">
+        <form>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Your Message</label>
+                <textarea class="form-control" rows="4"></textarea>
+            </div>
+            <button class="btn btn-primary-custom">Submit Message</button>
+        </form>
+    </div>
+</div>
+<!-- ================= LOADING OVERLAY ================= -->
+<div id="loadingOverlay">
+    <div class="loader-box">
+        <div class="ai-spinner"></div>
+        <h4 class="loading-text">AI is colorizing your image...</h4>
+    </div>
+</div>
+
+
+<div class="footer">
+    © 2025 AI Image Colorizer | Intelligent Computer Vision Platform
+</div>
+
+</body>
+</html>
